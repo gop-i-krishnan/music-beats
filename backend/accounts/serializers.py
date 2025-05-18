@@ -8,12 +8,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'full_name', 'password']
+        fields = ['email', 'first_name', 'last_name', 'password']
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
-            full_name=validated_data['full_name'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
             password=validated_data['password']
         )
         return user
@@ -38,4 +39,5 @@ class LoginSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'username', 'first_name', 'last_name']
+        fields = ['id', 'email', 'first_name', 'last_name']
+
