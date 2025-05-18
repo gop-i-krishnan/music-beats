@@ -1,6 +1,29 @@
-venv/
-__pycache__/
-*.sqlite3
+# Python bytecode
 *.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+
+# Django stuff:
 *.log
-*.DS_Store
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+
+# If you use SQLite database file in your project folder
+db.sqlite3
+
+# Django migrations
+*/migrations/*
+
+# VS Code settings folder
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Environment variables file
+.env
