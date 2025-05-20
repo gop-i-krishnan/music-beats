@@ -250,26 +250,121 @@ I also tested:
 
 ---
 
-🧠 WHAT I LEARNED DEEPLY
-
-* How Django apps and projects are structured
-* Why virtual environments matter
-* What “migrations” do and how to reset them safely
-* How to override Django’s user model properly
-* What JWT is, how it works, and how it’s better than static tokens
-* How to handle login, logout, token rotation securely
-* How to test APIs properly and read backend error messages
+👣 **STAGE 3: PAYMENT MODULE - FEE MANAGEMENT**
 
 ---
 
-🚀 WHAT'S NEXT?
+1️⃣ CREATED `payments` APP
 
-1. Define user roles (admin, teacher, student)
-2. Protect certain views using role-based permissions
-3. Build a `/profile/` API to fetch/update logged-in user data
-4. Start connecting with frontend using HTML + JS
-5. Add next modules: attendance, scheduling, fees
+* Ran inside backend:
+
+  ```bash
+  python manage.py startapp payments
+  ```
+* This app will manage all fee records, summaries, and payments.
 
 ---
 
-🧭 This is how I built the complete user auth system for MUSIC BEATS.
+2️⃣ DEFINED FEE RECORD MODEL
+
+* In `payments/models.py`, created `FeeRecord` model to track individual fee payments, including:
+
+```python
+class FeeRecord(models.Model):
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_paid = models.DateField(auto_now_add=True)
+    remarks = models.TextField(blank=True, null=True)
+```
+
+---
+
+3️⃣ CREATED SERIALIZERS FOR FEE RECORDS
+
+* In `payments/serializers.py`, created `FeeRecordSerializer` for easy conversion between model and JSON.
+
+---
+
+4️⃣ ADDED VIEWS TO HANDLE FEE RECORDS
+
+* Used Django REST Framework generic views:
+
+  * `FeeRecordListCreateView`: List all fees or create a new fee payment.
+  * `FeeRecordRetrieveUpdateDestroyView`: Get, update or delete a fee record by ID.
+* Created custom APIViews for:
+
+  * `FeeSummaryView`: Summary of fees paid by a student in a date range.
+  * `overall_fee_summary`: Overall total payments and count for the institute.
+
+---
+
+5️⃣ DEFINED URL ROUTES FOR PAYMENTS APP
+
+* In `payments/urls.py`, routes include:
+
+```python
+from django.urls import path
+from .views import FeeRecordListCreateView, FeeSummaryView, FeeRecordRetrieveUpdateDestroyView, overall_fee_summary
+
+urlpatterns = [
+    path('fees/', FeeRecordListCreateView.as_view(), name='fee-list-create'),
+    path('fees/<int:pk>/', FeeRecordRetrieveUpdateDestroyView.as_view(), name='fee-detail'),
+    path('fees/<int:student_id>/summary/', FeeSummaryView.as_view(), name='fee-summary'),
+    path('fees/summary/overall/', overall_fee_summary, name='fee-overall-summary'),
+]
+```
+
+---
+
+6️⃣ INCLUDED PAYMENTS APP URLS IN PROJECT `core/urls.py`
+
+```python
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/v1/accounts/', include('accounts.urls')),
+    path('api/v1/attendance/', include('attendance.urls')),
+    path('api/v1/payments/', include('payments.urls')),
+    path('api/v1/accounts/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/accounts/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
+```
+
+---
+
+7️⃣ TESTED PAYMENT ENDPOINTS USING POSTMAN
+
+| Endpoint                                      | Purpose                             | Status  |
+| --------------------------------------------- | ----------------------------------- | ------- |
+| `/api/v1/payments/fees/`                      | List and create fee records         | ✅ Works |
+| `/api/v1/payments/fees/<int:pk>/`             | Retrieve, update, delete fee record | ✅ Works |
+| `/api/v1/payments/fees/<student_id>/summary/` | Student fee summary with filters    | ✅ Works |
+| `/api/v1/payments/fees/summary/overall/`      | Overall institute fee summary       | ✅ Works |
+
+---
+
+🧠 **WHAT I LEARNED DEEPLY IN PAYMENTS MODULE**
+
+* How to create modular apps and isolate functionality
+* Using Django REST Framework generics for CRUD APIs
+* Building custom summary APIs with filtering parameters
+* Including app URLs inside project URL configuration
+* Testing and debugging 404 errors caused by URL mismatches
+* Using Django query filters and aggregation functions for reports
+
+---
+
+🚀 **WHAT'S NEXT?**
+
+1. Implement role-based permissions (admin/teacher/student)
+2. Build attendance management module APIs
+3. Create user profile and settings APIs
+4. Start working on the frontend UI integration with these APIs
+5. Add scheduling and notifications module
+
+---
+
+🧭 This is how I built the user authentication and payments systems for MUSIC BEATS backend so far.
+
+---
+
+If you want, I can help you generate a nicely formatted markdown or README file ready to commit. Would you like that?

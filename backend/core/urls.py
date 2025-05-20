@@ -26,6 +26,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Project’s main user routes - versioned
     path('api/v1/accounts/', include('accounts.urls')),
+    # Project’s main attendance routes - versioned
+    path('api/v1/attendance/', include('attendance.urls')),
+    # Project’s main payments routes - versioned
+    path('api/v1/payments/', include('payments.urls')),
     # JWT Authentication endpoints
     path('api/v1/accounts/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/accounts/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
